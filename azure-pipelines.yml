@@ -19,7 +19,7 @@ pr:
       - files/*
 
 pool:
-  name: keda-pool
+  name: Pool-KF
 
 variables:
   dockerfilePath: '.devcontainer/Dockerfile'
@@ -51,6 +51,26 @@ steps:
         latest
         $(Build.BuildId)
 
+
+
+  - task: Docker@2
+    displayName: Push acrukscortshrdcont01.azurecr.io/cortisone/devcontainer:$(Build.BuildId)
+    timeoutInMinutes: 120
+    inputs:
+      containerRegistry: "acrukscortshrdcont01"
+      repository: "cortisone/devcontainer"
+      command: "push"
+      tags: |
+        latest
+        $(Build.BuildId)
+
+  - task: Bash@3
+    displayName: Clean docker cache
+    inputs:
+      targetType: "inline"
+      script: |
+        docker system prune -a -f
+        
 # stages:
 # - stage: Validate
 #   displayName: 'Validate and Lint'
